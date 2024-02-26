@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 import Home from "./pages/Home"
 import About from "./pages/About"
+import PageNotFound from "./pages/PageNotFound"
 import Vans from "./pages/Vans/Vans"
 import VanDetail from "./pages/Vans/VanDetail"
 import Dashboard from "./pages/Host/Dashboard"
@@ -39,7 +40,7 @@ function App() {
               <Route path="photos" element={<HostVanPhotos />} />
             </Route>
           </Route>
-          <Route path="*" element={<h1>Page not found!</h1>} />
+          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

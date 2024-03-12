@@ -1,19 +1,16 @@
 import React from "react"
-import { Link } from "react-router-dom"
-import { BsStarFill } from "react-icons/bs"
+import { Link, defer, Await, useLoaderData } from "react-router-dom"
 import { getHostVans } from "../../api"
+import { requireAuth } from "../../utils"
+import { BsStarFill } from "react-icons/bs"
+
+export async function loader({ request }) {
+    await requireAuth(request)
+    return defer({ vans: getHostVans() })
+}
 
 export default function Dashboard() {
-    const [vans, setVans] = React.useState([])
-    const [loading, setLoading] = React.useState(false)
-    const [error, setError] = React.useState(null)
-    React.useEffect(() => {
-        setLoading(true)
-        getHostVans()
-            .then(data => setVans(data))
-            .catch(err => setError(err))
-            .finally(() => setLoading(false))
-    }, [])
+    const loaderData = useLoaderData()
 
     function renderVanElements(vans) {
         const hostVansEls = vans.map((van) => (
@@ -34,14 +31,6 @@ export default function Dashboard() {
         )
     }
 
-    // if (loading) {
-    //     return <h1>Loading...</h1>
-    // }
-
-    if (error) {
-        return <h1>Error: {error.message}</h1>
-    }
-
     return (
         <>
             <section className="host-dashboard-earnings">
@@ -54,9 +43,7 @@ export default function Dashboard() {
             </section>
             <section className="host-dashboard-reviews">
                 <h2>Review score</h2>
-
                 <BsStarFill className="star" />
-
                 <p>
                     <span>5.0</span>/5
                 </p>
@@ -67,18 +54,9 @@ export default function Dashboard() {
                     <h2>Your listed vans</h2>
                     <Link to="vans">View all</Link>
                 </div>
-                {
-                    loading && !vans
-                        ? <h1>Loading...</h1>
-                        : (
-                            <>
-                                {renderVanElements(vans)}
-                            </>
-                        )
-                }
-                {/*<React.Suspense fallback={<h3>Loading...</h3>}>
+                <React.Suspense fallback={<h3>Loading...</h3>}>
                     <Await resolve={loaderData.vans}>{renderVanElements}</Await>
-                </React.Suspense>*/}
+                </React.Suspense>
             </section>
         </>
     )
